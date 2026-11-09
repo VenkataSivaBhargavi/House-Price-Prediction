@@ -1,0 +1,965 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>House Price Prediction</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 25px;
+            background: linear-gradient(
+                135deg,
+                #e8f5e9,
+                #f1f8e9,
+                #e0f2f1
+            );
+            color: #243047;
+        }
+
+        /* MAIN CONTAINER */
+
+        .main-container {
+            width: 100%;
+            max-width: 1800px;
+            min-height: 1100px;
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: 500px minmax(0, 1fr);
+            grid-template-rows: 210px 1fr;
+
+            gap: 25px;
+        }
+
+        /* PROFILE SECTION */
+
+        .profile-section {
+            grid-column: 1;
+            grid-row: 1 / 3;
+
+            min-height: 1100px;
+            padding: 45px 30px;
+
+            border-radius: 30px;
+
+            background: linear-gradient(
+                145deg,
+                #064e3b,
+                #047857,
+                #0f766e,
+                #14b8a6
+            );
+
+            color: white;
+
+            box-shadow: 0 20px 50px
+                rgba(4, 120, 87, 0.30);
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-section::before {
+            content: "";
+
+            position: absolute;
+
+            width: 350px;
+            height: 350px;
+
+            background: rgba(255,255,255,0.10);
+
+            border-radius: 50%;
+
+            top: -120px;
+            right: -120px;
+        }
+
+        .profile-section::after {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            background: rgba(255,255,255,0.08);
+
+            border-radius: 50%;
+
+            bottom: -120px;
+            left: -100px;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+
+            width: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        /* PROFILE IMAGE */
+
+        .profile-image {
+            width: 280px;
+            height: 280px;
+
+            object-fit: cover;
+            border-radius: 50%;
+
+            border: 10px solid #d1fae5;
+
+            box-shadow:
+                0 0 25px rgba(255,255,255,0.7),
+                0 0 50px rgba(52,211,153,0.5);
+
+            margin-bottom: 35px;
+
+            transition: 0.4s;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.06);
+        }
+
+        .profile-section h2 {
+            font-size: 40px;
+            font-weight: 900;
+
+            line-height: 1.3;
+
+            color: #ffffff;
+
+            margin-bottom: 30px;
+
+            text-shadow: 0 4px 15px
+                rgba(0,0,0,0.3);
+
+            overflow-wrap: anywhere;
+        }
+
+        /* PROFILE DETAILS */
+
+        .profile-info {
+            width: 100%;
+
+            background: rgba(255,255,255,0.17);
+
+            padding: 25px 18px;
+
+            border-radius: 20px;
+
+            margin-bottom: 22px;
+
+            border: 1px solid
+                rgba(255,255,255,0.35);
+
+            backdrop-filter: blur(12px);
+
+            box-shadow: 0 8px 20px
+                rgba(0,0,0,0.12);
+
+            transition: 0.3s;
+        }
+
+        .profile-info:hover {
+            transform: scale(1.04);
+
+            background: rgba(255,255,255,0.28);
+        }
+
+        .profile-info span {
+            display: block;
+
+            font-size: 17px;
+            font-weight: 700;
+
+            color: #d1fae5;
+
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            font-size: 21px;
+            font-weight: 800;
+
+            line-height: 1.6;
+
+            color: #ffffff;
+
+            overflow-wrap: anywhere;
+        }
+
+        /* PROJECT HEADER */
+
+        .header-section {
+            grid-column: 2;
+            grid-row: 1;
+
+            background: linear-gradient(
+                120deg,
+                #ffffff,
+                #f0fdf4,
+                #ecfdf5
+            );
+
+            border-radius: 25px;
+
+            box-shadow: 0 10px 30px
+                rgba(4,120,87,0.12);
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 25px;
+
+            border-bottom: 7px solid #059669;
+        }
+
+        .header-section h1 {
+            font-size: clamp(34px, 3.5vw, 58px);
+
+            font-weight: 900;
+
+            letter-spacing: 2px;
+
+            line-height: 1.2;
+
+            color: #065f46;
+
+            text-shadow: 0 3px 8px
+                rgba(5,150,105,0.15);
+        }
+
+        .header-section p {
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #0f766e;
+
+            margin-top: 15px;
+        }
+
+        /* PREDICTION SECTION */
+
+        .prediction-section {
+            grid-column: 2;
+            grid-row: 2;
+
+            background: rgba(255,255,255,0.95);
+
+            border-radius: 25px;
+
+            padding: 40px;
+
+            box-shadow: 0 12px 35px
+                rgba(4,120,87,0.12);
+        }
+
+        /* FORM CARD */
+
+        .form-card {
+            background: linear-gradient(
+                135deg,
+                #f0fdf4,
+                #ecfdf5
+            );
+
+            padding: 35px;
+
+            border-radius: 22px;
+
+            border: 1px solid #a7f3d0;
+
+            box-shadow: 0 8px 20px
+                rgba(5,150,105,0.08);
+        }
+
+        .form-card h3 {
+            font-size: 27px;
+
+            color: #047857;
+
+            margin-bottom: 30px;
+
+            text-align: center;
+        }
+
+        /* FORM GRID */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 22px;
+        }
+
+        /* LABELS */
+
+        .input-group label {
+            display: block;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            color: #334155;
+
+            margin-bottom: 10px;
+        }
+
+        /* INPUTS AND DROPDOWNS */
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+
+            padding: 16px;
+
+            border: 2px solid #a7f3d0;
+
+            border-radius: 12px;
+
+            outline: none;
+
+            font-size: 16px;
+
+            background: #ffffff;
+
+            color: #334155;
+
+            transition: 0.3s;
+
+            cursor: pointer;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #059669;
+
+            box-shadow: 0 0 0 4px
+                rgba(5,150,105,0.13);
+        }
+
+        /* COUNTRY DEFAULT FIELD */
+
+        .country-select {
+            background: #ecfdf5 !important;
+            font-weight: 700;
+            color: #047857 !important;
+        }
+
+        /* PREDICTION BUTTON */
+
+        .predict-button {
+            width: 100%;
+
+            margin-top: 35px;
+
+            padding: 19px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                90deg,
+                #047857,
+                #059669,
+                #0f766e
+            );
+
+            color: white;
+
+            font-size: 21px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .predict-button:hover {
+            transform: translateY(-4px);
+
+            box-shadow: 0 12px 25px
+                rgba(5,150,105,0.35);
+        }
+
+        /* RESULT */
+
+        .result {
+            margin-top: 30px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            border-radius: 18px;
+
+            background: linear-gradient(
+                120deg,
+                #dcfce7,
+                #ecfdf5
+            );
+
+            border: 2px solid #86efac;
+        }
+
+        .result h2 {
+            color: #166534;
+
+            font-size: 28px;
+        }
+
+        .result h3 {
+            color: #15803d;
+
+            font-size: 38px;
+
+            margin: 15px 0;
+
+            overflow-wrap: anywhere;
+        }
+
+        .result p {
+            font-size: 18px;
+
+            color: #166534;
+        }
+
+        /* ERROR */
+
+        .error {
+            margin-top: 20px;
+
+            padding: 18px;
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            font-weight: 700;
+        }
+
+        /* TABLET RESPONSIVE */
+
+        @media (max-width: 1100px) {
+
+            .main-container {
+                grid-template-columns:
+                    380px minmax(0, 1fr);
+            }
+
+            .profile-image {
+                width: 220px;
+                height: 220px;
+            }
+
+            .profile-section h2 {
+                font-size: 32px;
+            }
+
+            .profile-info p {
+                font-size: 17px;
+            }
+
+            .prediction-section {
+                padding: 25px;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+        }
+
+        /* MOBILE RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .main-container {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .profile-section {
+                width: 100%;
+                min-height: 950px;
+            }
+
+            .header-section {
+                min-height: 190px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prediction-section {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .profile-section {
+                padding: 35px 20px;
+                min-height: 850px;
+            }
+
+            .profile-image {
+                width: 190px;
+                height: 190px;
+            }
+
+            .profile-section h2 {
+                font-size: 27px;
+            }
+
+            .profile-info p {
+                font-size: 15px;
+            }
+
+            .header-section h1 {
+                font-size: 29px;
+            }
+
+            .header-section p {
+                font-size: 17px;
+            }
+
+            .prediction-section {
+                padding: 18px;
+            }
+
+            .form-card {
+                padding: 18px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <!-- LEFT PROFILE SECTION -->
+
+    <aside class="profile-section">
+
+        <div class="profile-content">
+
+            <img
+                src="{{ url_for('static', filename='pic1.png') }}"
+                alt="Profile Photo"
+                class="profile-image"
+            >
+
+            <h2>Venkata Siva Bhargavi</h2>
+
+            <div class="profile-info">
+                <span>📞 CONTACT NUMBER</span>
+                <p>9177648532</p>
+            </div>
+
+            <div class="profile-info">
+                <span>✉️ EMAIL ADDRESS</span>
+                <p>venkatasivabhargavinune@gmail.com</p>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- PROJECT TITLE -->
+
+    <header class="header-section">
+
+        <h1>HOUSE PRICE PREDICTION</h1>
+
+        <p>— By Venkata Siva Bhargavi —</p>
+
+    </header>
+
+
+    <!-- PREDICTION SECTION -->
+
+    <main class="prediction-section">
+
+        <div class="form-card">
+
+            <h3>Enter House Details</h3>
+
+            <form action="/predict" method="POST">
+
+                <div class="form-grid">
+
+                    <!-- BEDROOMS -->
+
+                    <div class="input-group">
+                        <label for="bedrooms">Bedrooms</label>
+                        <input type="number" id="bedrooms"
+                               name="bedrooms" step="any" required>
+                    </div>
+
+                    <!-- BATHROOMS -->
+
+                    <div class="input-group">
+                        <label for="bathrooms">Bathrooms</label>
+                        <input type="number" id="bathrooms"
+                               name="bathrooms" step="any" required>
+                    </div>
+
+                    <!-- LIVING AREA -->
+
+                    <div class="input-group">
+                        <label for="sqft_living">Living Area (sqft)</label>
+                        <input type="number" id="sqft_living"
+                               name="sqft_living" required>
+                    </div>
+
+                    <!-- LOT AREA -->
+
+                    <div class="input-group">
+                        <label for="sqft_lot">Lot Area (sqft)</label>
+                        <input type="number" id="sqft_lot"
+                               name="sqft_lot" required>
+                    </div>
+
+                    <!-- FLOORS -->
+
+                    <div class="input-group">
+                        <label for="floors">Floors</label>
+                        <input type="number" id="floors"
+                               name="floors" step="any" required>
+                    </div>
+
+                    <!-- WATERFRONT -->
+
+                    <div class="input-group">
+                        <label for="waterfront">Waterfront (0 or 1)</label>
+                        <input type="number" id="waterfront"
+                               name="waterfront" min="0" max="1" required>
+                    </div>
+
+                    <!-- VIEW -->
+
+                    <div class="input-group">
+                        <label for="view">View</label>
+                        <input type="number" id="view"
+                               name="view" min="0" required>
+                    </div>
+
+                    <!-- CONDITION -->
+
+                    <div class="input-group">
+                        <label for="condition">Condition</label>
+                        <input type="number" id="condition"
+                               name="condition" min="1" required>
+                    </div>
+
+                    <!-- ABOVE AREA -->
+
+                    <div class="input-group">
+                        <label for="sqft_above">Above Area (sqft)</label>
+                        <input type="number" id="sqft_above"
+                               name="sqft_above" required>
+                    </div>
+
+                    <!-- BASEMENT AREA -->
+
+                    <div class="input-group">
+                        <label for="sqft_basement">Basement Area (sqft)</label>
+                        <input type="number" id="sqft_basement"
+                               name="sqft_basement" required>
+                    </div>
+
+                    <!-- YEAR BUILT -->
+
+                    <div class="input-group">
+                        <label for="yr_built">Year Built</label>
+                        <input type="number" id="yr_built"
+                               name="yr_built" required>
+                    </div>
+
+                    <!-- YEAR RENOVATED -->
+
+                    <div class="input-group">
+                        <label for="yr_renovated">Year Renovated</label>
+                        <input type="number" id="yr_renovated"
+                               name="yr_renovated" required>
+                    </div>
+
+                    <!-- CITY DROPDOWN -->
+
+                    <div class="input-group">
+
+                        <label for="city">City</label>
+
+                        <select id="city" name="city" required>
+
+                            <option value="">Select City</option>
+                            <option value="0">Shoreline</option>
+                            <option value="1">Seattle</option>
+                            <option value="2">Kent</option>
+                            <option value="3">Bellevue</option>
+                            <option value="4">Redmond</option>
+                            <option value="5">Maple Valley</option>
+                            <option value="6">North Bend</option>
+                            <option value="7">Lake Forest Park</option>
+                            <option value="8">Sammamish</option>
+                            <option value="9">Auburn</option>
+                            <option value="10">Des Moines</option>
+                            <option value="11">Bothell</option>
+                            <option value="12">Federal Way</option>
+                            <option value="13">Kirkland</option>
+                            <option value="14">Issaquah</option>
+                            <option value="15">Woodinville</option>
+                            <option value="16">Normandy Park</option>
+                            <option value="17">Fall City</option>
+                            <option value="18">Renton</option>
+                            <option value="19">Carnation</option>
+                            <option value="20">Snoqualmie</option>
+                            <option value="21">Duvall</option>
+                            <option value="22">Burien</option>
+                            <option value="23">Covington</option>
+                            <option value="24">Inglewood-Finn Hill</option>
+                            <option value="25">Kenmore</option>
+                            <option value="26">Newcastle</option>
+                            <option value="27">Mercer Island</option>
+                            <option value="28">Black Diamond</option>
+                            <option value="29">Ravensdale</option>
+                            <option value="30">Clyde Hill</option>
+                            <option value="31">Algona</option>
+                            <option value="32">Skykomish</option>
+                            <option value="33">Tukwila</option>
+                            <option value="34">Vashon</option>
+                            <option value="35">Yarrow Point</option>
+                            <option value="36">SeaTac</option>
+                            <option value="37">Medina</option>
+                            <option value="38">Enumclaw</option>
+                            <option value="39">Snoqualmie Pass</option>
+                            <option value="40">Pacific</option>
+                            <option value="41">Beaux Arts Village</option>
+                            <option value="42">Preston</option>
+                            <option value="43">Milton</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STATE ZIP DROPDOWN -->
+
+                    <div class="input-group">
+
+                        <label for="statezip">State ZIP</label>
+
+                        <select id="statezip" name="statezip" required>
+
+                            <option value="">Select State ZIP</option>
+                            <option value="0">WA 98133</option>
+                            <option value="1">WA 98119</option>
+                            <option value="2">WA 98042</option>
+                            <option value="3">WA 98008</option>
+                            <option value="4">WA 98052</option>
+                            <option value="5">WA 98115</option>
+                            <option value="6">WA 98038</option>
+                            <option value="7">WA 98045</option>
+                            <option value="8">WA 98155</option>
+                            <option value="9">WA 98105</option>
+                            <option value="10">WA 98074</option>
+                            <option value="11">WA 98106</option>
+                            <option value="12">WA 98007</option>
+                            <option value="13">WA 98092</option>
+                            <option value="14">WA 98198</option>
+                            <option value="15">WA 98006</option>
+                            <option value="16">WA 98102</option>
+                            <option value="17">WA 98011</option>
+                            <option value="18">WA 98125</option>
+                            <option value="19">WA 98003</option>
+                            <option value="20">WA 98136</option>
+                            <option value="21">WA 98033</option>
+                            <option value="22">WA 98029</option>
+                            <option value="23">WA 98117</option>
+                            <option value="24">WA 98034</option>
+                            <option value="25">WA 98072</option>
+                            <option value="26">WA 98023</option>
+                            <option value="27">WA 98107</option>
+                            <option value="28">WA 98166</option>
+                            <option value="29">WA 98116</option>
+                            <option value="30">WA 98024</option>
+                            <option value="31">WA 98055</option>
+                            <option value="32">WA 98077</option>
+                            <option value="33">WA 98027</option>
+                            <option value="34">WA 98059</option>
+                            <option value="35">WA 98075</option>
+                            <option value="36">WA 98014</option>
+                            <option value="37">WA 98065</option>
+                            <option value="38">WA 98199</option>
+                            <option value="39">WA 98053</option>
+                            <option value="40">WA 98058</option>
+                            <option value="41">WA 98122</option>
+                            <option value="42">WA 98103</option>
+                            <option value="43">WA 98112</option>
+                            <option value="44">WA 98005</option>
+                            <option value="45">WA 98118</option>
+                            <option value="46">WA 98177</option>
+                            <option value="47">WA 98004</option>
+                            <option value="48">WA 98019</option>
+                            <option value="49">WA 98144</option>
+                            <option value="50">WA 98168</option>
+                            <option value="51">WA 98001</option>
+                            <option value="52">WA 98056</option>
+                            <option value="53">WA 98146</option>
+                            <option value="54">WA 98028</option>
+                            <option value="55">WA 98148</option>
+                            <option value="56">WA 98057</option>
+                            <option value="57">WA 98040</option>
+                            <option value="58">WA 98010</option>
+                            <option value="59">WA 98051</option>
+                            <option value="60">WA 98031</option>
+                            <option value="61">WA 98109</option>
+                            <option value="62">WA 98030</option>
+                            <option value="63">WA 98126</option>
+                            <option value="64">WA 98032</option>
+                            <option value="65">WA 98178</option>
+                            <option value="66">WA 98288</option>
+                            <option value="67">WA 98108</option>
+                            <option value="68">WA 98070</option>
+                            <option value="69">WA 98188</option>
+                            <option value="70">WA 98002</option>
+                            <option value="71">WA 98039</option>
+                            <option value="72">WA 98022</option>
+                            <option value="73">WA 98068</option>
+                            <option value="74">WA 98047</option>
+                            <option value="75">WA 98050</option>
+                            <option value="76">WA 98354</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- COUNTRY DROPDOWN: USA DEFAULT 0 -->
+
+                    <div class="input-group">
+
+                        <label for="country">Country</label>
+
+                        <select
+                            id="country"
+                            name="country"
+                            class="country-select"
+                            required>
+
+                            <option value="0" selected>USA</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUBMIT BUTTON -->
+
+                <button
+                    type="submit"
+                    class="predict-button"
+                >
+
+                    🔍 Predict House Price
+
+                </button>
+
+            </form>
+
+
+            <!-- PREDICTION RESULT -->
+
+            {% if prediction is defined %}
+
+            <div class="result">
+
+                <h2>🎉 Prediction Result</h2>
+
+                <h3>${{ "%.2f"|format(prediction) }}</h3>
+
+                <p>Estimated House Price</p>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ERROR MESSAGE -->
+
+            {% if error %}
+
+            <div class="error">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
