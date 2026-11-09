@@ -325,6 +325,15 @@ Through this project, I gained practical experience in:
 - HTML and CSS frontend development.
 - Integrating machine learning models with web applications.
 
+## 🌐 Live Project Deployment
+
+The House Price Prediction application is deployed and accessible online using Render.
+
+Live Application:
+👉 https://house-price-prediction-uowh.onrender.com
+
+Users can open the live application, enter house details, and get predicted house prices directly through the web interface without installing the project locally.
+
 ## 👩‍💻 Author
 
 **Venkata Siva Bhargavi**
